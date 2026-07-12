@@ -1,0 +1,15 @@
+<template>
+  <small
+    >Copyright &copy; 2022~Now · All Right Reserved · <br />Latest Update：<span
+      id="lastUpdate"
+    ></span
+  ></small>
+</template>
+
+<script>
+  const dateTime = new Date(document.lastModified);
+  const hour = dateTime.getHours() + 8;
+  dateTime.setHours(hour);
+  const formateDate = dateTime.toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '');
+  zk.getId("lastUpdate").html = formateDate;
+</script>

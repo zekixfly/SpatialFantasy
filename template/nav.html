@@ -1,0 +1,64 @@
+<template>
+  <div id="navList-m" class="nav-list-m">
+    <img class="menu" src="/SpatialFantasy/svg/iconmonstr-menu.svg" alt="" />
+    <img class="close" src="/SpatialFantasy/svg/iconmonstr-x-mark-lined.svg" alt="" />
+  </div>
+  <h1>
+    <a href="/SpatialFantasy"><img src="/SpatialFantasy/img/Spatial-FantasyX3.png" alt="Zeki's Spatial Base." title="Zeki's Spatial Base."/></a>
+  </h1>
+  <!-- <h1>Spatial Fantasy</h1> -->
+  <ul id="navList" class="nav-list">
+    <li>
+      <a href="csmap">CS1.6 Map</a>
+      <!-- <ul class="nav-list-spatial">
+        <li><a href="de">de</a></li>
+        <li><a href="cs">cs</a></li>
+        <li><a href="as">as</a></li>
+      </ul> -->
+    </li>
+    <li><a href="news">News</a></li>
+    <li><a href="about">About</a></li>
+    <li><a href="contact">Contact</a></li>
+  </ul>
+</template>
+
+<script>
+  const navListEl = zk.getId("navList");
+  const navListMobileEl = zk.getId("navList-m");
+  const bodyEl = zk.one("body");
+  const navEl = zk.one("nav");
+  const routes = [
+    { path: "/", redirect: "/news" },
+    { path: "/de", template: "spatial.html" },
+    { path: "/cs", template: "spatial.html" },
+    { path: "/as", template: "spatial.html" },
+    { path: "/csmap",
+      template: "spatial.html",
+      children: [{ path: "/:title", template: "detail.html" }] 
+    },
+    { path: "/news", template: "news.html" },
+    { path: "/about", template: "about.html" },
+    { path: "/contact", template: "contact.html" },
+  ];
+  
+  const router = navListEl.routerBind({ mode: location.origin.includes('archive') ? "hash" : "history", routes });
+  zk.log("router", router);
+
+  let menuSwitch = false;
+  const menuSlide = () => {
+    menuSwitch = !menuSwitch;
+    if (menuSwitch) {
+      navListMobileEl.getClass("menu")[0].addClass("d-none");
+      navListMobileEl.getClass("close")[0].addClass("d-block");
+      bodyEl.addClass("offset-260");
+      navEl.addClass("offset-0");
+    } else {
+      navListMobileEl.getClass("menu")[0].delClass("d-none");
+      navListMobileEl.getClass("close")[0].delClass("d-block");
+      bodyEl.delClass("offset-260");
+      navEl.delClass("offset-0");
+    }
+  };
+  navListMobileEl.on("click", menuSlide);
+  navListEl.all("a[href]").on("click", () => navListMobileEl.getStyle("display") !== "none" && menuSlide());
+</script>
