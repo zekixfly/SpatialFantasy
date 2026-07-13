@@ -41,7 +41,7 @@
     { path: "/contact", template: "contact.html" },
   ];
   
-  const router = navListEl.routerBind({ mode: location.origin.includes('archive') ? "hash" : "history", routes });
+  const router = navListEl.routerBind({ mode: "hash", routes });
   zk.log("router", router);
 
   let menuSwitch = false;
