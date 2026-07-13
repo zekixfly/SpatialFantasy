@@ -27,8 +27,8 @@
       let preloadPhoto = zk.getTag('body')[0].addKid(document.createElement("style"));
       let picUrl = '';
       const slotContentEl = zk.one("[slot=content]");
-      const path = slotContentEl.getAttr("path");
-      if(path) slotContentEl.delAttr("path");
+      let path = slotContentEl.getAttr("path");
+      path ? slotContentEl.delAttr("path") : path = `${location.href.split("/").at(-2)}/${location.href.split("/").at(-1)}`;
       const [category, title] = path.split("/");
 
       const res = await fetch(API_GET_DATA);
