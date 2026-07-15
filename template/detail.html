@@ -30,141 +30,144 @@
       let path = slotContentEl.getAttr("path");
       path ? slotContentEl.delAttr("path") : path = `${location.href.split("/").at(-2)}/${location.href.split("/").at(-1)}`;
       const [category, title] = path.split("/");
+      const detailEl = zk.getId("detail");
 
       const res = await fetch(API_GET_DATA);
       const data = await res.json();
       const findMap = data.find(
         (spatial) => category.toLowerCase() === spatial.category.toLowerCase() && title.toLowerCase() === spatial.title.toLowerCase()
       );
+      if(!findMap) {
+        let { script, template } = await zk.fetchTemplate("404.html");
+        detailEl.replaceKid(template.content.cloneNode(true));
+        if (script) detailEl.addKid(script);
+      } else {
+        zk.log("findMap", findMap);
+        const { title: spatialTitle, date, category: spatialCategory, description, gallery, src } = findMap;
 
-      zk.log("findMap", findMap);
-      const { title: spatialTitle, date, category: spatialCategory, description, gallery, src } = findMap;
-
-
-      if (spatialTitle) {
-        zk.getId("detail").dataBind({ spatialTitle });
-      }
-      const showBoxEl = zk.getId("showBox");
-      
-
-      let thumbnailLi = '';
-      let thumbnailUl = zk.makeTag('ul')
-      thumbnailUl.id = 'showBox-thumbnail'
-      zk.getId('gallery').addKid(thumbnailUl);
-      zk.getId('previous-page-btn').addClass('disabled-btn');	
-  
-      if (gallery) {
-        let slideImgEl = zk.makeTag("img");
-        slideImgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[0]}`;
-        showBoxEl.one("#slide-img").addKid(slideImgEl);
-
-        for(let i=0; i<gallery.length; i++){
-          thumbnailLi = zk.makeTag('li');
-          thumbnailLi.setAttr('num', i+1);
-          
-          let imgEl = zk.makeTag("img");
-          imgEl.title = gallery[i];
-          imgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[i]}`;
-          imgEl.decoding = "async";
-          thumbnailLi.addKid(imgEl);
-          thumbnailUl.addKid(thumbnailLi);
-
-          thumbnailLi.on('click', function() {            
-            zk.toZekiEl(this).addClass('thumbnail-fucus').siblings().delClass('thumbnail-fucus');            
-            currentPage = zk.toZekiEl(this).getAttr('num')-1;            
-            if(currentPage > 0 && currentPage < gallery.length-1) {
-              zk.getIds('previous-page-btn', 'next-page-btn').delClass('disabled-btn');
-            } else if(currentPage <= 0) {
-              zk.getId('previous-page-btn').addClass('disabled-btn');
-            } else if(currentPage >= gallery.length-1) {
-              zk.getId('next-page-btn').addClass('disabled-btn');
-            }
-            slideImgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[zk.toZekiEl(this).getAttr('num')-1]}`;
-          })
+        if (spatialTitle) {
+          detailEl.dataBind({ spatialTitle });
         }
-        zk.getId('showBox-thumbnail').getTag('li')[0].addClass('thumbnail-fucus').siblings().delClass('thumbnail-fucus');
-        zk.getId('gallery').scrollLeft = 0;
+        const showBoxEl = zk.getId("showBox"); 
 
+        let thumbnailLi = '';
+        let thumbnailUl = zk.makeTag('ul')
+        thumbnailUl.id = 'showBox-thumbnail'
+        zk.getId('gallery').addKid(thumbnailUl);
+        zk.getId('previous-page-btn').addClass('disabled-btn');	
+    
+        if (gallery) {
+          let slideImgEl = zk.makeTag("img");
+          slideImgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[0]}`;
+          showBoxEl.one("#slide-img").addKid(slideImgEl);
 
-        zk.getId('previous-page-btn').on('click', function() {
-          currentPage--;
-          if(currentPage <= 0) {
-            currentPage = 0;
-            zk.toZekiEl(this).addClass('disabled-btn');
+          for(let i=0; i<gallery.length; i++){
+            thumbnailLi = zk.makeTag('li');
+            thumbnailLi.setAttr('num', i+1);
             
+            let imgEl = zk.makeTag("img");
+            imgEl.title = gallery[i];
+            imgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[i]}`;
+            imgEl.decoding = "async";
+            thumbnailLi.addKid(imgEl);
+            thumbnailUl.addKid(thumbnailLi);
+
+            thumbnailLi.on('click', function() {            
+              zk.toZekiEl(this).addClass('thumbnail-fucus').siblings().delClass('thumbnail-fucus');            
+              currentPage = zk.toZekiEl(this).getAttr('num')-1;            
+              if(currentPage > 0 && currentPage < gallery.length-1) {
+                zk.getIds('previous-page-btn', 'next-page-btn').delClass('disabled-btn');
+              } else if(currentPage <= 0) {
+                zk.getId('previous-page-btn').addClass('disabled-btn');
+              } else if(currentPage >= gallery.length-1) {
+                zk.getId('next-page-btn').addClass('disabled-btn');
+              }
+              slideImgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[zk.toZekiEl(this).getAttr('num')-1]}`;
+            })
           }
-          else {
-            zk.toZekiEl(this).delClass('disabled-btn');
-            zk.getId('next-page-btn').delClass('disabled-btn');
-            picUrl = '';		
-            //preload previous 2 page.
-            picUrl += ` url(/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage]})`
-            if(currentPage - 1 >= 0) {
-              picUrl += ` url(/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage-1]})`;
+          zk.getId('showBox-thumbnail').getTag('li')[0].addClass('thumbnail-fucus').siblings().delClass('thumbnail-fucus');
+          zk.getId('gallery').scrollLeft = 0;
+
+
+          zk.getId('previous-page-btn').on('click', function() {
+            currentPage--;
+            if(currentPage <= 0) {
+              currentPage = 0;
+              zk.toZekiEl(this).addClass('disabled-btn');
+              
             }
-          }
-          slideImgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage]}`;
-          preloadPhoto.innerHTML = `
-            body::before {
-              content: ${picUrl};
-            display: none;
-          }`;
-
-          zk.getId('showBox-thumbnail').getTag('li')[currentPage].addClass('thumbnail-fucus').siblings().delClass('thumbnail-fucus');         
-          
-          zk.getId('gallery').scrollLeft = 
-            zk.getId('showBox-thumbnail').getTag('li')[currentPage].offsetLeft - 
-            zk.getId('gallery').offsetLeft - 
-            zk.getId('gallery').offsetWidth/2 + 
-            zk.getId('showBox-thumbnail').getTag('li')[currentPage].offsetWidth/2;
-          zk.log("scrollLeft", zk.getId('gallery').scrollLeft);
-        });
-
-        zk.getId('next-page-btn').on('click', function() {
-          currentPage++;
-          if(currentPage >= gallery.length-1) {
-            currentPage = gallery.length-1;
-            zk.toZekiEl(this).addClass('disabled-btn');
-          }
-          else {		
-            zk.toZekiEl(this).delClass('disabled-btn');
-            zk.getId('previous-page-btn').delClass('disabled-btn');
-            picUrl = '';		
-            //preload next 2 page.
-            picUrl += ` url(/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage]})`
-            if(currentPage + 1 <= gallery.length-1) {
-              picUrl += ` url(/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage+1]})`;
+            else {
+              zk.toZekiEl(this).delClass('disabled-btn');
+              zk.getId('next-page-btn').delClass('disabled-btn');
+              picUrl = '';		
+              //preload previous 2 page.
+              picUrl += ` url(/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage]})`
+              if(currentPage - 1 >= 0) {
+                picUrl += ` url(/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage-1]})`;
+              }
             }
-          }
-          slideImgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage]}`;
-          preloadPhoto.innerHTML = `
-            body::before {
-              content: ${picUrl};
-            display: none;
-          }`;
+            slideImgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage]}`;
+            preloadPhoto.innerHTML = `
+              body::before {
+                content: ${picUrl};
+              display: none;
+            }`;
 
-          zk.getId('showBox-thumbnail').getTag('li')[currentPage].addClass('thumbnail-fucus').siblings().delClass('thumbnail-fucus');	
-          
-          zk.getId('gallery').scrollLeft = 
-            zk.getId('showBox-thumbnail').getTag('li')[currentPage].offsetLeft - 
-            zk.getId('gallery').offsetLeft - 
-            zk.getId('gallery').offsetWidth/2 + 
-            zk.getId('showBox-thumbnail').getTag('li')[currentPage].offsetWidth/2;
-          zk.log("scrollLeft", zk.getId('gallery').scrollLeft);
-        });
-      
+            zk.getId('showBox-thumbnail').getTag('li')[currentPage].addClass('thumbnail-fucus').siblings().delClass('thumbnail-fucus');         
+            
+            zk.getId('gallery').scrollLeft = 
+              zk.getId('showBox-thumbnail').getTag('li')[currentPage].offsetLeft - 
+              zk.getId('gallery').offsetLeft - 
+              zk.getId('gallery').offsetWidth/2 + 
+              zk.getId('showBox-thumbnail').getTag('li')[currentPage].offsetWidth/2;
+            zk.log("scrollLeft", zk.getId('gallery').scrollLeft);
+          });
 
-      }
+          zk.getId('next-page-btn').on('click', function() {
+            currentPage++;
+            if(currentPage >= gallery.length-1) {
+              currentPage = gallery.length-1;
+              zk.toZekiEl(this).addClass('disabled-btn');
+            }
+            else {		
+              zk.toZekiEl(this).delClass('disabled-btn');
+              zk.getId('previous-page-btn').delClass('disabled-btn');
+              picUrl = '';		
+              //preload next 2 page.
+              picUrl += ` url(/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage]})`
+              if(currentPage + 1 <= gallery.length-1) {
+                picUrl += ` url(/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage+1]})`;
+              }
+            }
+            slideImgEl.src = `/SpatialFantasy/img/spatial/${spatialCategory}/${gallery[currentPage]}`;
+            preloadPhoto.innerHTML = `
+              body::before {
+                content: ${picUrl};
+              display: none;
+            }`;
 
+            zk.getId('showBox-thumbnail').getTag('li')[currentPage].addClass('thumbnail-fucus').siblings().delClass('thumbnail-fucus');	
+            
+            zk.getId('gallery').scrollLeft = 
+              zk.getId('showBox-thumbnail').getTag('li')[currentPage].offsetLeft - 
+              zk.getId('gallery').offsetLeft - 
+              zk.getId('gallery').offsetWidth/2 + 
+              zk.getId('showBox-thumbnail').getTag('li')[currentPage].offsetWidth/2;
+            zk.log("scrollLeft", zk.getId('gallery').scrollLeft);
+          });
 
-      const descriptionEl = zk.getId("description");
-      if(description) {
-        descriptionEl.html = `<h2>Description</h2><p>${description}</p>`;
-      }
+        }
 
-      const fileEl = zk.getId("file");
-      if(src) {
-        fileEl.html = `<h2>File</h2><p><a href="${src}" target="_blank">Download</a>(Github Release)</p>`;
+        const descriptionEl = zk.getId("description");
+        if(description) {
+          descriptionEl.html = `<h2>Description</h2><p>${description}</p>`;
+        }
+
+        const fileEl = zk.getId("file");
+        if(src) {
+          fileEl.html = `<h2>File</h2><p><a href="${src}" target="_blank">Download</a>(Github Release)</p>`;
+        }
+
       }
 
 </script>
