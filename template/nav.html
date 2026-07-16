@@ -41,7 +41,7 @@
     { path: "/contact", template: "contact.html" },
   ];
   
-  const router = navListEl.routerBind({ mode: "hash", routes });
+  const router = navListEl.routerBind({ mode: "history", routes });
   zk.log("router", router);
 
   let menuSwitch = false;
