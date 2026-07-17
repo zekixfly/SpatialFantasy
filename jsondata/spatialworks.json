@@ -5,16 +5,16 @@
     "category": "csmap",
     "description": "This is a map of an underground platform made from the carriages of a train model SYZ25B.",
     "gallery": [
-      "cs_zeki_syz25b_1.png",
-      "cs_zeki_syz25b_2.png",
-      "cs_zeki_syz25b_3.png",
-      "cs_zeki_syz25b_4.png",
-      "cs_zeki_syz25b_5.png",
-      "cs_zeki_syz25b_6.png",
-      "cs_zeki_syz25b_7.png",
-      "cs_zeki_syz25b_8.png",
-      "cs_zeki_syz25b_9.png",
-      "cs_zeki_syz25b_10.png"
+      "cs_zeki_syz25b/1.png",
+      "cs_zeki_syz25b/2.png",
+      "cs_zeki_syz25b/3.png",
+      "cs_zeki_syz25b/4.png",
+      "cs_zeki_syz25b/5.png",
+      "cs_zeki_syz25b/6.png",
+      "cs_zeki_syz25b/7.png",
+      "cs_zeki_syz25b/8.png",
+      "cs_zeki_syz25b/9.png",
+      "cs_zeki_syz25b/10.png"
     ],
     "src": "https://github.com/zekixfly/SpatialFantasy/releases/tag/cs_zeki_syz25b"
   }
