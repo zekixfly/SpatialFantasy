@@ -12,20 +12,26 @@
   try {
     const res = await fetch(API_GET_DATA);
     const data = await res.json();
-    for(let spatial of data){
+    for(let i=0; i<data.length; i++) {
 
         let liEl = zk.makeTag("li");
         let dateEl = zk.makeTag("date");
         let spanEl = zk.makeTag("span");
 
-        dateEl.html = spatial.date;
-        spanEl.html = `${spatial.category.toUpperCase()} adds: "${spatial.title}".`;
+        liEl.setAttr("path", `${data[i].category}/${data[i].title}`);
+        dateEl.html = data[i].date;
 
-        liEl.setAttr("path", `${spatial.category}/${spatial.title}`);
-
-        liEl.addKids(dateEl, spanEl);
+        if(i === 0) {
+          let imgEl = zk.makeTag("img");
+          imgEl.src = `/SpatialFantasy/img/spatial/${data[0].category}/${data[0].gallery[0]}`;
+          spanEl.html = data[0].title;
+          liEl.addKids(dateEl, imgEl, spanEl);
+        } else {
+          spanEl.html = `${data[i].category.toUpperCase()} adds: "${data[i].title}".`;
+          liEl.addKids(dateEl, spanEl);
+        }
+        
         ulEl.addKid(liEl);
-
         newsInfoEl.addKid(ulEl);
     }
   } catch (error) {
@@ -34,10 +40,10 @@
   const liEls = ulEl.getTag("li");
 
   liEls.forEach((liEl, idx) => {
-    if (idx > 6) liEl.hide();
+    if (idx > 2) liEl.hide();
   });
 
-  if(liEls.length > 7) {
+  if(liEls.length > 3) {
     let divEl = zk.makeTag("div");
     divEl.id = "newsMore_Line"
     divEl.html = "<a href='javascript:void(0)' class='more'>More...▼</a>";
@@ -51,7 +57,7 @@
         const liEls = ulEl.getTag("li");
         const isMore = moreEl.text.includes("More");
         liEls.forEach((liEl, idx) => {
-          if (idx > 6) isMore ? liEl.show() : liEl.hide();
+          if (idx > 2) isMore ? liEl.show() : liEl.hide();
         });
         moreEl.text = isMore ? "▲...Less" : "More...▼";
     });

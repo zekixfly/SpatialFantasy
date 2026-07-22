@@ -49,31 +49,79 @@ body
 .newsInfo_Table
     color: rgba(0, 0, 0, 0.5)
     font-size: 16px
-    font-weight: 100
+    // font-weight: 100
     // white-space: nowrap
     // overflow: hidden
     // width: -webkit-fill-available
     // text-overflow: ellipsis
     // display: inline-block
     li
+        position: relative
         cursor: pointer
         width: fit-content
         @include breakpoint(sm-max)
             width: auto
             padding: 5px 0
             border-bottom: 5px dashed rgba(0, 0, 0, 0.1)
-        &:hover
-            color: rgba(0, 0, 0, 1)
+        &:not(:nth-child(1))
+            font-weight: 100
+            &:hover
+                color: rgba(0, 0, 0, 1)
+                span
+                    background: black url(../img/go.gif) 0px 8px repeat-x
+                    color: white
+                    &::before
+                        border: 13.5px solid black
+                        border-color: transparent black black transparent
+        &:nth-child(1)
+            width: 390px
+            overflow: hidden
+            date
+                position: absolute
+                background-color: #008b8b
+                &::after
+                    border: 13.5px solid #008b8b
+                    border-color: #008b8b transparent transparent #008b8b
+            img
+                width: 100%
+                &:hover
+                    transform: scale(2)
             span
-                background: black url(../img/go.gif) 0px 3px repeat-x
-                color: white
-        &:nth-child(1) date
-            &:nth-child(1)
-                color: #008B8B
+                position: absolute
+                bottom: 10px
+                right: 10px
+                color: lavender
+                background-color: rgba(0, 0, 0, 0.5)
+                padding: 5px
         date, span
                 display: inline-block
+                padding: 5px
         date
-                margin-right: 10px
+                margin-right: 26px
+                position: relative
+                top: 0px
+                left: 0px
+                background-color: rgba(0, 0, 0, 0.5)
+                color: #FFF     
+                z-index: 100
+                &::after
+                    content: ""
+                    position: absolute
+                    right: -26px
+                    top: 0px
+                    border: 13.5px solid rgba(0, 0, 0, 0.5)
+                    border-color: rgba(0, 0, 0, 0.5) transparent transparent rgba(0, 0, 0, 0.5)
+        span
+                position: relative
+                &::before
+                    content: ""
+                    position: absolute
+                    left: -26px
+                    top: 0px
+                    border: 13.5px solid transparent
+                    border-color: transparent
+                    transition: all .2s ease
+
 
 #newsMore_Line
     @include breakpoint(sm-max)
